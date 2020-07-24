@@ -1,0 +1,137 @@
+@import '../../../style/theme.scss';
+
+.container {
+  padding-bottom:60PX;
+  height: 100%;
+  box-sizing: border-box;
+}
+.orderContainer {
+  padding: 8PX 8PX 0;
+}
+
+.radius {
+  position: absolute;
+  background-color:#efefef;
+  width: 24px;
+  height: 24px;
+  border-radius: 100px;
+  z-index: 1;
+}
+
+.status {
+  //width: 100%;
+  border-top-left-radius: 4PX;
+  border-top-right-radius: 4PX;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15PX;
+  padding: 24px;
+  position: relative;
+  background-color: #f7f7f7;
+  .topLeftRadius, .topRightRadius {
+    @extend .radius;
+    bottom: -11px;
+  }
+  .topLeftRadius {
+    left: -11px;
+  }
+  .topRightRadius {
+    right: -11px;
+  }
+  /* &:after {
+    content: '';
+    position: absolute;
+    transform-origin: center;
+    pointer-events: none;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    //transform: scaleY(.5);
+    border-bottom: 1PX dashed $color-border-base;
+  } */
+}
+
+.contentList {
+  :global {
+    .at-input {
+      margin-left: 0;
+      padding:18px 24px;
+      margin-bottom: 0;
+      &__title, input {
+        font-size: 15PX;
+      }
+    }
+    .at-list__item {
+      font-size: 15PX;
+      padding:18px 24px ;
+    }
+    .item-extra__info {
+      font-size: 15PX;
+      padding-right: 0;
+    }
+    .item-extra__icon {
+      position: static;
+      transform: translateY(0);
+    }
+    .item-extra__icon-arrow {
+      margin-right: -6px;
+      font-size: 16PX;
+    }
+    .at-list__item-container {
+      justify-content: space-between;
+    }
+    .at-list__item-content {
+      flex: none;
+      -webkit-box-flex: none;
+    }
+    .at-list__item-extra {
+      max-width: 100%;
+    }
+  }
+  
+}
+
+.payButton {
+  padding: 24px;
+  background-color: #fff;
+  border-bottom-left-radius: 4PX;
+  border-bottom-right-radius: 4PX;
+  position: relative;
+  .bottomLeftRadius, .bottomRightRadius {
+    @extend .radius;
+    top: -12px;
+  }
+  .bottomLeftRadius {
+    left: -11px;
+  }
+  .bottomRightRadius {
+    right: -11px;
+  }
+  &:before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    //transform: scaleY(.5);
+    border-top: 1PX dashed $color-border-base;
+  }
+}
+
+.linkButton {
+  color: $color-brand;
+  padding: 0;
+  background-color: transparent;
+  border:0;
+  margin-right: 24px;
+  height: auto;
+  line-height: 1;
+  :global {
+    .at-button__text {
+      font-size: 15PX;
+    }
+  }
+}

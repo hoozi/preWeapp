@@ -1,0 +1,74 @@
+.container {
+  margin-top: 12PX;
+  padding:0 12PX;
+  .item {
+    border-radius: 6PX;
+    background-color: #fff;
+    display: flex;
+    position: relative;
+    margin-bottom: 12PX;
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 200%;
+      height: 200%;
+      border: 1PX solid #ebedf0;
+      border-radius: 6PX;
+      transform-origin: 0 0;
+      transform: scale(.5);
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+    .thumn {
+      display: flex;
+      flex-direction: column;
+      width: 90PX;
+      background-color: #000; 
+      box-sizing: border-box;
+      padding-left: 12PX;
+      justify-content: center;
+      border-top-left-radius: 6PX;
+      border-bottom-left-radius: 6PX;
+      background-image: linear-gradient(to bottom right, #faad14 , #d48806);
+      .price {
+        font-size: 18PX;
+        color: #fff;
+      }
+      .name {
+        font-size: 12PX;
+        color: rgba($color: #fff, $alpha: 0.8);
+      }
+    }
+    .content {
+      padding: 12PX;
+      flex:1;
+      .title {
+        font-size: 15PX;
+        font-weight: 600;
+        margin-bottom: 4PX;
+      }
+      .tagList {
+        display: flex;
+        .tag {
+          border-radius: 4PX;
+          margin-right: 8PX;
+          font-size: 12PX;
+          color: #999;
+          //background-color: #6190E8;
+          &:first-child {
+            //background-color: #1890ff
+          }
+        }
+      }
+    }
+    .radio {
+      position: absolute;
+      font-size: 22PX;
+      right: 12PX;
+      top: 12PX;
+      color: #ddd;
+    }
+  }
+}

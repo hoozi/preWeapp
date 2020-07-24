@@ -1,0 +1,31 @@
+/* brandColor = '#2d75ff',
+  brandColorTap = '#2a6ce8',
+  tintColor = '#fff',
+  textBaseColor = '#333B5A',
+  fillColor= '#f7f8fa',
+  borderColorBase='#ebedf0',
+  warningColor='#fa8c16',
+  successColor='#6abf47',
+  errorColor='#f4333c',
+  importantColor='#ff5b05',
+  waitColor='#108ee9' */
+
+
+//$color-brand: #2d75ff;
+/* 引入 Taro UI 默认样式 */
+$color-brand: #2d75ff !default;
+$color-brand-light: #3a7eff !default;
+$color-brand-dark: #296be5 !default;
+$color-border-base: #ebedf0 !default;
+.touchHighlight {
+  background-color: #000;
+}
+page {
+  background-color: #efefef;
+  //display: flex;
+  //flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font-size: 14PX;
+}
+@import "~taro-ui/dist/style/index.scss";

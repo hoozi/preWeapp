@@ -1,0 +1,12 @@
+@import '../../../style/theme.scss';
+
+.container {
+  background-color: $color-brand;
+  height: 100%;
+}
+.applyCanvas {
+  width: 100%;
+  height: 900PX;
+  background-color: $color-brand;
+  pointer-events: none;
+}

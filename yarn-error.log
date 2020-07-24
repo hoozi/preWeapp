@@ -1,0 +1,110 @@
+Arguments: 
+  /Users/leihu/.nvm/versions/node/v14.5.0/bin/node /usr/local/bin/yarn weapp
+
+PATH: 
+  /Users/leihu/.nvm/versions/node/v14.5.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/leihu/.nvm/versions/node/v14.5.0/bin:/Users/leihu/apache-maven-3.5.0/bin:/Users/leihu/Library/Android/sdk/platform-tools/:/Library/Frameworks/Mono.framework/Versions/5.18.1/bin:/Users/leihu/apache-maven-3.5.0/bin:/Users/leihu/Library/Android/sdk/platform-tools/:/Library/Frameworks/Mono.framework/Versions/5.18.1/bin
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  14.5.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "apply",
+    "version": "1.0.0",
+    "private": true,
+    "description": "apply",
+    "templateInfo": {
+      "name": "redux",
+      "typescript": true,
+      "css": "less"
+    },
+    "scripts": {
+      "build:weapp": "taro build --type weapp",
+      "build:swan": "taro build --type swan",
+      "build:alipay": "taro build --type alipay",
+      "build:tt": "taro build --type tt",
+      "build:h5": "taro build --type h5",
+      "build:rn": "taro build --type rn",
+      "build:qq": "taro build --type qq",
+      "build:quickapp": "taro build --type quickapp",
+      "dev:weapp": "NODE_ENV=production npm run build:weapp -- --watch",
+      "dev:swan": "npm run build:swan -- --watch",
+      "dev:alipay": "npm run build:alipay -- --watch",
+      "dev:tt": "npm run build:tt -- --watch",
+      "dev:h5": "npm run build:h5 -- --watch",
+      "dev:rn": "npm run build:rn -- --watch",
+      "dev:qq": "npm run build:qq -- --watch",
+      "dev:quickapp": "npm run build:quickapp -- --watch"
+    },
+    "browserslist": [
+      "last 3 versions",
+      "Android >= 4.1",
+      "ios >= 8"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+      "@babel/runtime": "^7.7.7",
+      "@rematch/core": "^1.4.0",
+      "@rematch/loading": "^1.2.1",
+      "@tarojs/components": "3.0.5",
+      "@tarojs/react": "3.0.5",
+      "@tarojs/runtime": "3.0.5",
+      "@tarojs/taro": "3.0.5",
+      "@types/lodash": "^4.14.157",
+      "@types/react-redux": "^7.1.9",
+      "classnames": "^2.2.6",
+      "dayjs": "^1.8.30",
+      "lodash": "^4.17.19",
+      "rc-field-form": "^1.8.0",
+      "react": "^16.10.0",
+      "react-dom": "^16.10.0",
+      "react-redux": "^7.2.0",
+      "redux": "^4.0.0",
+      "redux-logger": "^3.0.6",
+      "redux-thunk": "^2.3.0",
+      "taro-ui": "^3.0.0-alpha.3"
+    },
+    "devDependencies": {
+      "@types/webpack-env": "^1.13.6",
+      "@types/react": "^16.0.0",
+      "@tarojs/mini-runner": "3.0.5",
+      "@babel/core": "^7.8.0",
+      "@tarojs/webpack-runner": "3.0.5",
+      "babel-preset-taro": "3.0.5",
+      "eslint-config-taro": "3.0.5",
+      "eslint": "^6.8.0",
+      "eslint-plugin-react": "^7.8.2",
+      "eslint-plugin-import": "^2.12.0",
+      "eslint-plugin-react-hooks": "^1.6.1",
+      "stylelint": "9.3.0",
+      "@typescript-eslint/parser": "^2.x",
+      "@typescript-eslint/eslint-plugin": "^2.x",
+      "typescript": "^3.7.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Command "weapp" not found.
+      at new MessageError (/usr/local/lib/node_modules/yarn/lib/cli.js:186:110)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:87307:17
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:98:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:116:14
+      at new Promise (<anonymous>)
+      at new F (/usr/local/lib/node_modules/yarn/lib/cli.js:23451:28)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:95:12
+      at runCommand (/usr/local/lib/node_modules/yarn/lib/cli.js:87312:22)
+      at Object.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:87412:14)

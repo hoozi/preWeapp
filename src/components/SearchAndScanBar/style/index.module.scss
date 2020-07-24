@@ -1,0 +1,33 @@
+@import '../../../style/theme.scss';
+
+.container {
+  box-sizing: border-box;
+  width: 100%;
+  padding:12PX;
+  background-color: #fff;
+  .inner {
+    background-color: #f9f9f9;
+    padding:0 24px 0 16px;
+    border-radius: 100px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .input {
+      padding:0 8px;
+      margin: 0;
+      flex: 1;
+      height: 100%;
+      line-height: 52px;
+    }
+    .leftIcon {
+      font-size: 48px;
+      color: #999;
+    }
+    .rightIcon {
+      font-size: 48px;
+      color: #999;
+    }
+  }
+  
+}
