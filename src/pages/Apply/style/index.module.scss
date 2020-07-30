@@ -1,13 +1,28 @@
-@import '../../../style/theme.scss';
+@import '../../../style/index.scss';
+$spaceBottom1: calc(48PX + 36px + constant(safe-area-inset-bottom) - 12PX);
+$spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
+
+.pb60 {
+  padding-bottom: $spaceBottom1;
+  padding-bottom: $spaceBottom2;
+}
+.mb60 {
+  margin-bottom: $spaceBottom1;
+  margin-bottom: $spaceBottom2;
+}
 
 .container {
-  padding-bottom:60PX;
   height: 100%;
   box-sizing: border-box;
+  //padding-top: calc(24PX + 64px);
 }
 .orderContainer {
-  padding: 8PX 8PX 0;
+  padding: 12PX 12PX 0;
+  //padding-bottom: calc(48PX + 36px);
+  margin-bottom: calc(48PX + 18px + 48px + 92px + constant(safe-area-inset-bottom));
+  margin-bottom: calc(48PX + 18px + 48px + 92px + env(safe-area-inset-bottom))
 }
+
 
 .radius {
   position: absolute;
@@ -20,8 +35,8 @@
 
 .status {
   //width: 100%;
-  border-top-left-radius: 4PX;
-  border-top-right-radius: 4PX;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -53,6 +68,13 @@
   } */
 }
 
+.fieldContent {
+  padding: 12px 0;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background-color: #fff;
+}
+
 .contentList {
   :global {
     .at-input {
@@ -60,15 +82,22 @@
       padding:18px 24px;
       margin-bottom: 0;
       &__title, input {
-        font-size: 15PX;
+        font-size: 14PX;
+      }
+      &__title {
+        margin-right: 0;
+        width: 100PX;
       }
     }
     .at-list__item {
-      font-size: 15PX;
-      padding:18px 24px ;
+      font-size: 14PX;
+      padding:18px 24px;
+      &:after {
+        display: none;
+      }
     }
     .item-extra__info {
-      font-size: 15PX;
+      font-size: 14PX;
       padding-right: 0;
     }
     .item-extra__icon {
@@ -85,6 +114,8 @@
     .at-list__item-content {
       flex: none;
       -webkit-box-flex: none;
+      width: 100PX;
+      margin-right: 0;
     }
     .at-list__item-extra {
       max-width: 100%;
@@ -94,30 +125,24 @@
 }
 
 .payButton {
+  @extend %topHairLine;
+  z-index: 10;
   padding: 24px;
+  bottom: calc(48PX + 36px);
+  bottom: $spaceBottom1;
+  bottom: $spaceBottom2;
+  left: 0;
+  right: 0;
+  top: auto;
   background-color: #fff;
-  border-bottom-left-radius: 4PX;
-  border-bottom-right-radius: 4PX;
-  position: relative;
-  .bottomLeftRadius, .bottomRightRadius {
-    @extend .radius;
-    top: -12px;
-  }
-  .bottomLeftRadius {
-    left: -11px;
-  }
-  .bottomRightRadius {
-    right: -11px;
-  }
-  &:before {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    top: 0;
-    left: 0;
-    right: 0;
-    //transform: scaleY(.5);
-    border-top: 1PX dashed $color-border-base;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  position: fixed;
+  display: flex;
+  :global {
+    .at-button {
+      flex: 1
+    }
   }
 }
 
@@ -133,5 +158,71 @@
     .at-button__text {
       font-size: 15PX;
     }
+  }
+}
+
+.fieldApplyContainer {
+  background-color: #fff;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.applyField {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:18px 24px;
+  font-size: 14PX;
+  /* @extend %bottomHairLine;
+  &:after {
+    left: 24px;
+  } */
+  .applyFieldContent {
+    flex:1;
+    display: flex;
+    .applyLabel {
+      width: 100PX;
+      color: #333
+    }
+    .applyValue {
+      flex: 1;
+      color: #999;
+      word-break: break-all;
+    }
+  }
+  .applyFieldCopy {
+    color: $color-brand;
+    width: 24px;
+  }
+}
+
+.priceCard {
+  display:flex;
+  background-color: #fff;
+  padding: 24PX 0;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  @extend %bottomHairLine;
+  .priceCardFieldName {
+    color: #c8c8c8;
+    font-size: 12PX;
+  }
+  .priceTag {
+    font-size: 32PX;
+    color: #333;
+    position: relative
+  }
+  .payStatus {
+    position: absolute;
+    padding: 2PX 4PX;
+    display: block;
+    right: -42PX;
+    top: -8PX;
+    font-size: 10PX;
+    border-radius: 100PX;
+    border-bottom-left-radius: 0;
+    border-width: 2PX;
+    border-style: solid;
+    line-height: 1;
   }
 }

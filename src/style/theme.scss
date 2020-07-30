@@ -16,10 +16,12 @@
 $color-brand: #2d75ff !default;
 $color-brand-light: #3a7eff !default;
 $color-brand-dark: #296be5 !default;
+
+$color-warning:#fa8c16 !default;
+
 $color-border-base: #ebedf0 !default;
-.touchHighlight {
-  background-color: #000;
-}
+
+
 page {
   background-color: #efefef;
   //display: flex;

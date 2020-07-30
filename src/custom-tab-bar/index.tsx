@@ -8,7 +8,64 @@ import { RootState } from '../store';
 import { color } from '../constants';
 import './style/index.scss';
 
-const paths:string[] = ['/pages/Apply/index', '/pages/Invoice/index']
+const paths:string[] = ['/pages/Apply/index', '/pages/MyOrder/index']
+
+interface CustomTabBarItemProps {
+  selected: number;
+  onSelected(index:number):void;
+  icon:string;
+  //selectedIcon: string;
+  text: string
+  index: number
+}
+
+interface TabBarItem {
+  text: string;
+  icon: string;
+}
+
+const tabBarItemMap:TabBarItem[] = [
+  {
+    text: '预提申请',
+    icon: 'snippets'
+  },
+/*   {
+    text: '发票管理',
+    icon: 'propertysafety'
+  }, */
+  {
+    text: '我的订单',
+    icon: 'danju'
+  }
+];
+
+const CustomTabBarItem: React.FC<CustomTabBarItemProps> = ({
+  selected,
+  onSelected,
+  icon,
+  index,
+  text
+}) => {
+  return (
+    <View className='tab-bar-item' onClick={() => onSelected(index)}>
+      <View className='tab-bar-icon'>
+        <Text
+          className={
+            classnames(
+              'iconfont tab-bar-icon-text',
+              {
+                [`icon-${icon}`]: selected !== index,
+                [`icon-${icon}-fill`]: selected === index
+              }
+            )
+          } 
+          style={{color: selected === index ? color.brandColor : '#333'}}
+        />
+      </View>
+        <View className='tab-bar-text' style={{color: selected === index ? color.brandColor : '#333', textAlign: 'center'}}>{text}</View>
+    </View>
+  )
+}
 
 const CustomTabBar: React.FC<any> = props => {
   const { common } = useDispatch<RematchDispatch<Models>>();
@@ -23,40 +80,13 @@ const CustomTabBar: React.FC<any> = props => {
   },[common,tabBarSelected]);
   return (
     <View className='tab-bar-container'>
-      <View className='tab-bar-item' onClick={() => handleSelectedIndexChange(0)}>
-        <View className='tab-bar-icon'>
-          <Text
-            className={
-              classnames(
-                'iconfont tab-bar-icon-text',
-                {
-                  'icon-snippets': tabBarSelected !== 0,
-                  'icon-snippets-fill': tabBarSelected === 0
-                }
-              )
-            } 
-            style={{color: tabBarSelected === 0 ? color.brandColor : '#333'}}
-          />
-        </View>
-        <View className='tab-bar-text' style={{color: tabBarSelected === 0 ? color.brandColor : '#333', textAlign: 'center'}}>预提</View>
-      </View>
-      <View className='tab-bar-item' onClick={() => handleSelectedIndexChange(1)}>
-        <View className='tab-bar-icon'>
-          <Text
-            className={
-              classnames(
-                'iconfont tab-bar-icon-text',
-                {
-                  'icon-propertysafety': tabBarSelected !== 1,
-                  'icon-propertysafety-fill': tabBarSelected === 1
-                }
-              )
-            } 
-            style={{color: tabBarSelected === 1 ? color.brandColor : '#333'}}
-          />
-        </View>
-        <View className='tab-bar-text' style={{color: tabBarSelected === 1 ? color.brandColor : '#333'}}>发票</View>
-      </View>
+      {
+        tabBarItemMap.map((item,index) => {
+          return (
+            <CustomTabBarItem text={item.text} selected={tabBarSelected} icon={item.icon} key={item.icon} index={index} onSelected={handleSelectedIndexChange}/>
+          )
+        })
+      }
     </View>
   )
 }

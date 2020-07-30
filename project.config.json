@@ -2,7 +2,7 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "apply",
 	"description": "apply",
-	"appid": "wxc3808e0ed6da254a",
+	"appid": "wx32ef857fc1641f72",
 	"setting": {
 		"urlCheck": false,
 		"es6": false,
@@ -28,11 +28,12 @@
 		},
 		"useIsolateContext": true,
 		"useCompilerModule": true,
-		"userConfirmedUseCompilerModuleSwitch": false
+		"userConfirmedUseCompilerModuleSwitch": true
 	},
 	"compileType": "miniprogram",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"libVersion": "2.11.2",
+	"libVersion": "2.12.0",
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
 	"condition": {}
 }

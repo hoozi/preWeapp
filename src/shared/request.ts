@@ -69,7 +69,8 @@ function parseData(response: ResponseData, options?:ApiOptions): any{
 export default function request<T>(options: Options): Promise<T> {
   if(options?.loadingText) {
     Taro.showLoading({
-      title: options?.loadingText
+      title: options?.loadingText,
+      mask: true
     })
   }
   const newOptions:RequestParams = {
@@ -88,12 +89,22 @@ export default function request<T>(options: Options): Promise<T> {
   return Taro.request(newOptions)
     .then(res => {
       Taro.hideLoading();
-      if(res.data.success) {
-        return parseData(res.data, options);
+      if(('success' in res.data) && !res.data.success) {
+        Taro.showToast({
+          title: res.data.error,
+          icon: 'none',
+          duration: 5000,
+          mask: true
+        });
       }
+      return parseData(res.data, options);
     })
     .catch((e) => {
-      console.log(e)
       Taro.hideLoading();
+      Taro.showToast({
+        title: '请求失败',
+        icon: 'none',
+        mask: true
+      })
     });
 }

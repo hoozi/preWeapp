@@ -1,4 +1,4 @@
-const color = {
+export const color = {
   brandColor:      '#2d75ff',
   brandColorTap:   '#2a6ce8',
   tintColor:       '#fff',
@@ -11,9 +11,3 @@ const color = {
   importantColor:  '#ff5b05',
   waitColor:       '#108ee9'
 }
-
-export {
-  color
-}
-
-

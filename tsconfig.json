@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2017",
     "module": "commonjs",
     "removeComments": false,
     "preserveConstEnums": true,
@@ -15,8 +15,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "jsx": "react",
-    "jsxFactory": "React.createElement",
+    "jsx": "preserve",
+    "jsxFactory": "Taro.createElement",
     "allowJs": true,
     "resolveJsonModule": true,
     "typeRoots": [

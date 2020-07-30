@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import store from './store';
 
-import './style/icon.scss';
-import './style/theme.scss';
+import './style/index.scss';
 
 type AppProps = React.PropsWithChildren<React.ReactElement>;
 

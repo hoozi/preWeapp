@@ -1,129 +1,107 @@
 import * as React from 'react';
-import { View, Picker, Text, Image } from '@tarojs/components';
+import { View, Text } from '@tarojs/components';
+import classnames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { RematchDispatch, Models } from '@rematch/core';
 import * as Taro from '@tarojs/taro';
-import dayjs from 'dayjs';
 import { AtList, AtListItem, AtInput, AtButton } from 'taro-ui';
 import isEmpty from 'lodash/isEmpty';
 import { color } from '../../constants';
 import SearchAndScanBar from '../../components/SearchAndScanBar';
 import { RootState } from '../../store';
 import classNames from './style/index.module.scss';
-import { ApplyData } from 'src/store/models/applyModel';
 import Empty from '../../components/Empty';
+import DateTimePicker from '../../components/DateTimePicker';
+import PriceCard from './components/PriceCard';
+import { hasError, tranformStatus, isHiddenField, fieldsList, payStatusMap, PayStatus } from './utils';
+import dayjs from 'dayjs';
 
-interface Status {
-  text: string;
-  color: string;
-  buttonText?: string;
-  buttonColor?: string;
-  actionType?:string;
-  buttonHidden?: boolean;
-  params?:string;
-}
+const { height, top } = Taro.getMenuButtonBoundingClientRect();
 
-interface Field {
+interface ApplyFieldProps {
   title: string;
-  dataIndex: string;
-  hidden?: boolean;
+  value: string;
+  extraStatus?: PayStatus;
+  copy?: boolean;
+  textColor?:string
 }
 
-interface StatusMap {
-  [key: string]: Status
-}
-
-const fieldsList = (data:Partial<ApplyData>):Field[] => {
-  return [
-    {
-      title: '提单号',
-      dataIndex: 'blno'
-    },
-    {
-      title: '船名/航次',
-      dataIndex: 'vesselName/vesselVoyage'
-    },
-    {
-      title: '箱主',
-      dataIndex: 'ctnOperatorCode'
-    },
-    {
-      title: '箱型尺寸',
-      dataIndex: 'ctnSizeType'
-    },
-    {
-      title: '提箱堆场',
-      dataIndex: 'yardName'
-    },
-    {
-      title: '要求完成时间',
-      dataIndex: 'deadline',
-      hidden: !!!data.status
-    },
-    {
-      title: '服务商',
-      dataIndex: 'serviceProvider',
-      hidden: !!!data.status
-    },
-    {
-      title: '联系电话',
-      dataIndex: 'mobile',
-      hidden: !!!data.status
-    }
-  ]
-}
-const tranformStatus = (status:string, payExtraText?:string):Status => {
-  if(!status) {
-    return {
-      text:'未下单',
-      color: '#bfbfbf',
-      buttonText: '下单',
-      buttonColor: color.brandColor
-    }
-  }
-  const statusMap:StatusMap = {
-    '00': {
-      text: '待支付',
-      color: color.warningColor,
-      buttonText: `支付 ${payExtraText}`,
-      buttonColor: color.brandColor,
-    },
-    '01': {
-      text: '审核中...',
-      color: color.brandColor,
-      buttonText: '撤回订单',
-      buttonColor: color.warningColor
-    },
-    '02': {
-      text: '预约成功',
-      color: color.successColor,
-      buttonHidden: true
-    },
-    '05': {
-      text: '已完成',
-      color: color.successColor,
-      buttonHidden: true
-    }
-  }
-  return statusMap[status];
+const ApplyField:React.FC<ApplyFieldProps> = ({
+  title,
+  value,
+  copy,
+  textColor,
+  extraStatus
+}) => {
+  const handleCopy = React.useCallback(async (data:string) => {
+    try {
+      await Taro.setClipboardData({
+        data
+      });
+    } catch(e) {}
+  }, [])
+  return (
+    <View className={classNames.applyField}>
+      <View className={classNames.applyFieldContent}>
+        <View className={classNames.applyLabel}>{title}</View>
+        <View className={classNames.applyValue} style={{color: textColor ? textColor : '#999'}}>{value}</View>
+      </View>
+      {
+        copy && 
+        <View className={
+          classnames(classNames.applyFieldCopy, 'iconfont', {
+            'icon-file-copy': true
+          })
+        } onClick={() => handleCopy(value)}/>
+      }
+      {
+        extraStatus && 
+        <View className={classNames.applyFieldStatus} style={{color:extraStatus.color}}>{extraStatus.text}</View>
+      }
+    </View>
+  )
 }
 
 const Apply:React.FC<any> = props => {
   const { data, postData } = useSelector((state:RootState) => state.applyModel);
   const { applyModel } = useDispatch<RematchDispatch<Models>>();
+  const currentStatus = (data.status === '00' || data.status === '04') ? `${data.status}_${data.payStatus}` : data.status || '';
+  const tranformedStatus = tranformStatus(
+    currentStatus,
+    data.status === '00' && (data.payStatus === '01' || data.payStatus === '00') ? `(¥${data.amount || '0'})` : ''
+  );
   const handleMobileChange = React.useCallback(mobile => {
     applyModel.updatePostData({
       mobile
-    })
+    });
   }, [applyModel]);
-  const handleDateChange = React.useCallback(e => {
-    const deadline = e.detail.value;
+  const handleDateChange = React.useCallback(deadline => {
     applyModel.updatePostData({
       deadline
     });
   }, [applyModel]);
-  const handleSubmit = React.useCallback(() => {
-    console.log(postData)
+  const handleSearchApply = React.useCallback((serialSequence) => {
+    //applyModel.updatePostData({serialSequence});
+    applyModel.fetchPre({
+      serialSequence
+    });
+  }, [applyModel])
+  const handleScanCode = React.useCallback(async () => {
+    try {
+      const response = await Taro.scanCode({});
+      const { result:serialSequence } = response;
+      applyModel.fetchPre({
+        serialSequence
+      });
+    } catch(e) {}
+  }, [Taro, applyModel]);
+  const handleSubmit = React.useCallback((actionType, params) => {
+    if(!!!actionType) return;
+    const payload = params ? params(postData, data) : {}
+    applyModel.operate({
+      actionType,
+      payload
+    })
   }, [postData]);
   Taro.usePullDownRefresh(() => {
     if(!isEmpty(data)) {
@@ -139,41 +117,61 @@ const Apply:React.FC<any> = props => {
     }
   });
   return (
-    <View className={classNames.container}>
-      <SearchAndScanBar placeholder='序列号' scan value={postData?.serialSequence??''} onSearch={serialSequence => applyModel.updatePostData({serialSequence})}/>
+    <View className={classNames.container} style={{
+      paddingTop: `calc(${top+12}px + ${height+4}px)`
+    }}>
+      <SearchAndScanBar 
+        placeholder='序列号'
+        fixed 
+        dark
+        scan 
+        value={postData?.serialSequence??''} 
+        onSearch={handleSearchApply}
+        onScanClick={handleScanCode}
+        isHeader
+      />
       {
         !isEmpty(data) && !isEmpty(postData) ?
         <View className={classNames.orderContainer}>
           <View className={classNames.status}>
-            <View style={{color: '#333', fontWeight: 'bold'}}>{data.serialSequence}</View>
-            <View style={{color: tranformStatus(data.status || '').color, fontWeight:'bold'}}>
-              <Text>{tranformStatus(data.status || '').text}</Text>
+            <View style={{color: '#333', display: 'flex', alignItems:'center'}}>
+              <Text style={{fontWeight: 'bold'}}>{data.serialSequence}</Text>
+              <View
+                className={
+                  classnames('iconfont', {
+                    'icon-file-copy': true
+                  })
+                }
+                style={{color: color.brandColor, marginLeft: '6rpx'}}
+                onClick={() => Taro.setClipboardData({data: data.serialSequence || ''})}
+              />
+            </View>
+            <View style={{color: tranformedStatus.color, fontWeight:'bold'}}>
+              <Text>{tranformedStatus.text}</Text>
             </View>
             <View className={classNames.topLeftRadius}/>
             <View className={classNames.topRightRadius}/>
           </View>
-          <AtList className={classNames.contentList} hasBorder={false}>
+          <PriceCard status={data.payStatus ? payStatusMap[data.payStatus]: null} price={Number(data.amount).toFixed(2)}/>
+          <View className={classNames.fieldContent}>
+            <View className={classNames.fieldApplyContainer}>
+              {
+                fieldsList(data).map(field => {
+                  const { dataIndex, title, copy, extraStatus, textColor } = field;
+                  const splitName = dataIndex.indexOf('/') > -1 ? dataIndex.split('/') : [];
+                  const value = splitName.length ? `${data[splitName[0]] || '暂无'}/${data[splitName[1]] || '暂无'}` : data[dataIndex] || '暂无';
+                  return !field.hidden ? <ApplyField title={title} value={value} copy={!!copy} extraStatus={extraStatus} textColor={textColor}/> : null
+                })
+              }
+            </View>
+            <AtList className={classNames.contentList} hasBorder={false}>
             {
-              fieldsList(data).map(field => {
-                const { dataIndex, title } = field;
-                const splitName = dataIndex.indexOf('/') > -1 ? dataIndex.split('/') : [];
-                const value = splitName.length ? `${data[splitName[0]]}/${data[splitName[1]]}` : data[dataIndex];
-                return !field.hidden ? <AtListItem title={title} extraText={value} hasBorder={false}/> : null
-              })
-            }
-            {
-              data.status === '05' &&
-              <AtListItem title='预提信息' arrow='right' onClick={() => Taro.navigateTo({
-                url: '/pages/ApplyInfo/index'
-              })}/>
-            }
-            {
-              !!!data.status &&
+              isHiddenField(data.status, data.payStatus) ?
               <React.Fragment>
-                <Picker value={postData.deadline || dayjs().format('YYYY-MM-DD')} mode='date' onChange={handleDateChange}>
-                  <AtListItem title='要求完成时间' hasBorder={false} className={classNames.arrow} extraText={postData.deadline||dayjs().format('YYYY-MM-DD')} arrow='right'/>
-                </Picker>
-                <AtListItem title='服务商' hasBorder={false} className={classNames.arrow} extraText={postData.service?.serviceProvider || '请选择'} arrow='right' onClick={() => Taro.navigateTo({
+                <DateTimePicker value={postData.deadline || ''} onChange={handleDateChange}>
+                  <AtListItem title='要求完成时间' hasBorder={false} className={classNames.arrow} extraText={postData.deadline || ''} arrow='right'/>
+                </DateTimePicker>
+                <AtListItem title='服务商' hasBorder={false} className={classNames.arrow} extraText={data.receiverName || '请选择'} arrow='right' onClick={() => Taro.navigateTo({
                   url: '/pages/Service/index'
                 })}/>
                 <AtInput
@@ -187,28 +185,45 @@ const Apply:React.FC<any> = props => {
                   type='phone'
                   onChange={handleMobileChange}
                 />
-              </React.Fragment>
+              </React.Fragment> :
+                data.status === '05' ? 
+                <AtList className={classNames.contentList} hasBorder={false}>
+                  <AtListItem title='预提信息' arrow='right' onClick={() => Taro.navigateTo({
+                    url: '/pages/ApplyInfo/index'
+                  })}/>
+                </AtList> : null
             }
           </AtList>
+          </View>
           {
-            !tranformStatus(data.status || '').buttonHidden &&
+            !tranformedStatus.buttonHidden &&
             <View className={classNames.payButton}>
-              <View className={classNames.bottomLeftRadius}/>
-              <View className={classNames.bottomRightRadius}/>
-              <AtButton type='primary' onClick={handleSubmit} customStyle={{
-                backgroundColor: tranformStatus(data.status || '').buttonColor || '',
-                borderColor: tranformStatus(data.status || '').buttonColor || ''
-              }}>
-                {tranformStatus(data.status || '', data.status === '00' ? `¥(${data.amount || '0'})` : '').buttonText}
-              </AtButton>
+              {
+                tranformedStatus.buttons && tranformedStatus.buttons.map(button => {
+                  return (
+                    <AtButton 
+                      type='primary' 
+                      onClick={() => handleSubmit(button.actionType, button.params)} 
+                      disabled={hasError(postData)}
+                      customStyle={{
+                        ...button.customStyle,
+                        backgroundColor: button.buttonColor || '',
+                        borderColor: button.buttonColor || ''
+                      }}
+                    >
+                      { button.buttonText }
+                    </AtButton>
+                  )
+                })
+              }
+              
             </View>
           }
         </View> : <Empty/>
       }
+      
     </View>
   )
 }
 
-
 export default Apply
-

@@ -1,0 +1,69 @@
+@import '../../../style/index.scss';
+
+.container {
+  height: 100%;
+  box-sizing: border-box;
+  //padding-top: calc(24PX + 64px);
+}
+
+.invoiceContainer {
+  padding: 12PX;
+  :global {
+    .at-swipe-action {
+      margin-bottom: 12PX;
+      border-radius: 6px;
+      background-color: #fff;
+      &:last-child {
+        margin-bottom: calc(60PX + constant(safe-area-inset-bottom));
+        margin-bottom: calc(60PX + env(safe-area-inset-bottom))
+      }
+    }
+  }
+}
+
+.invoiceCard {
+  position: relative;
+  
+  /*  */
+  &:after {
+    content: '';
+    position: absolute;
+    transform-origin: center;
+    pointer-events: none;
+    top: auto;
+    left: 12PX;
+    bottom: 0;
+    transform: scaleY(.5);
+    border-bottom: 1PX solid $color-border-base;
+    z-index: 3;
+  }
+  .invoiceTitle {
+    padding: 12PX;
+    font-size: 16PX;
+    font-weight: bold;
+    color: #333;
+    line-height: 1;
+    background-color: #f7f7f7;
+    position: relative;
+    .leftRadius, .rightRadius {
+      position: absolute;
+      background-color:#efefef;
+      width: 24px;
+      height: 24px;
+      border-radius: 100px;
+      z-index: 1;
+      bottom: -11px;
+    }
+    .leftRadius {
+      left: -11px;
+    }
+    .rightRadius {
+      right: -11px;
+    }
+  }
+  .invoiceContent {
+    color: #999;
+    font-size: 14PX;
+    padding: 12PX;
+  }
+}

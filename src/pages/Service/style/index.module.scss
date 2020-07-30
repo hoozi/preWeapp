@@ -2,7 +2,7 @@
   margin-top: 12PX;
   padding:0 12PX;
   .item {
-    border-radius: 6PX;
+    border-radius: 6px;
     background-color: #fff;
     display: flex;
     position: relative;
@@ -50,7 +50,7 @@
         margin-bottom: 4PX;
       }
       .tagList {
-        display: flex;
+        //display: flex;
         .tag {
           border-radius: 4PX;
           margin-right: 8PX;
@@ -67,7 +67,8 @@
       position: absolute;
       font-size: 22PX;
       right: 12PX;
-      top: 12PX;
+      top: 50%;
+      margin-top: -12PX;
       color: #ddd;
     }
   }

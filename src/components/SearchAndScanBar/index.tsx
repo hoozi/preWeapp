@@ -1,39 +1,68 @@
 import * as React from 'react';
 import * as Taro from '@tarojs/taro';
-import { View, Input } from '@tarojs/components';
-import { useDispatch } from 'react-redux';
-import { RematchDispatch, Models } from '@rematch/core';
-import classNames from './style/index.module.scss';
 import { InputProps } from '@tarojs/components/types/Input';
+import classnames from 'classnames';
+import { View, Input } from '@tarojs/components';
+import classNames from './style/index.module.scss';
 
-interface SearchAndScanBarProps extends InputProps {
+const { height, top, left } = Taro.getMenuButtonBoundingClientRect();
+const { windowWidth } = Taro.getSystemInfoSync();
+
+export interface SearchAndScanBarProps extends InputProps {
   onSearch(values?:string): void;
+  onScanClick?(): void;
+  fixed?:boolean;
   value?:string;
   scan?:boolean;
+  isHeader?:boolean;
+  dark?:boolean;
 }
 
 const SearchAndScanBar:React.FC<SearchAndScanBarProps> = ({
   onSearch,
+  onScanClick,
+  fixed,
   value,
   scan,
   placeholder,
-  ...restProps
+  dark,
+  isHeader
 }) => {
-  const { applyModel } = useDispatch<RematchDispatch<Models>>();
-  const handleScanCode = React.useCallback(async () => {
-    try {
-      const response = await Taro.scanCode({});
-      const { result:serialSequence } = response;
-      applyModel.fetchPre({
-        serialSequence
-      });
-    } catch(e) {}
-  }, [Taro, applyModel]);
+  const handleScanCode = React.useCallback(() => {
+    onScanClick && onScanClick();
+  }, []);
+  const containerStyle = React.useMemo(() => ({
+    paddingTop:!!isHeader ? top-1 : 12,
+    paddingRight:!!isHeader ? windowWidth-left + 12 : 12
+  }), [isHeader]);
   return (
-    <View className={classNames.container}>
-      <View className={classNames.inner}>
+    <View 
+      className={
+        classnames(
+          classNames.container,
+          {
+            [`${classNames.fixed}`]: !!fixed,
+            [`${classNames.containerDark}`]: !!dark
+          }
+        )
+      }
+      style={containerStyle}
+    >
+      <View className={classnames(
+          classNames.inner,
+          {
+            [`${classNames.innerDark}`]: !!dark
+          }
+        )} style={{height: !!isHeader ? height : '64rpx'}}>
         <View className={`iconfont icon-search ${classNames.leftIcon}`}/>
-        <Input placeholder={placeholder} placeholderStyle='color: #999' value={value} confirmType='search' onConfirm={e => onSearch(e.detail.value)} className={classNames.input}/>
+        <Input 
+          placeholder={placeholder} 
+          placeholderStyle='color: #999' 
+          value={value} 
+          confirmType='search' 
+          onConfirm={e => onSearch(e.detail.value)} 
+          className={classNames.input}
+        />
         {
           scan &&
           <View onClick={handleScanCode} className={`iconfont icon-scanning ${classNames.rightIcon}`}/>

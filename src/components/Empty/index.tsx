@@ -9,7 +9,7 @@ interface EmptyProps {
 
 const Empty:React.FC<EmptyProps> = ({
   onlyText=false,
-  text='暂时没有数据哦'
+  text='暂无数据'
 }:EmptyProps) => {
   return (
       <View className={classNames.container}>

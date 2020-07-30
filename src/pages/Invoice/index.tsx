@@ -1,42 +1,47 @@
-import * as React from 'react'
-import { View, Text, Input } from '@tarojs/components'
+import * as React from 'react';
+import { View, Text, Input } from '@tarojs/components';
+import { AtSwipeAction } from 'taro-ui';
 import * as Taro from '@tarojs/taro';
+import classNames from './style/index.module.scss';
+import SearchAndScanBar from '../../components/SearchAndScanBar';
+import { color } from '../../constants';
 
-
-
-// #region 书写注意
-//
-// 目前 typescript 版本还无法在装饰器模式下将 Props 注入到 Taro.Component 中的 props 属性
-// 需要显示声明 connect 的参数类型并通过 interface 的方式指定 Taro.Component 子类的 props
-// 这样才能完成类型检查和 IDE 的自动提示
-// 使用函数模式则无此限制
-// ref: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20796
-//
-// #endregion
-
-type PageStateProps = {
-  counter: {
-    num: number
-  }
+const InvoiceCard:React.FC<any> = ({
+  data
+}) => {
+  return (
+    <AtSwipeAction
+      onClick={e => console.log(e)}
+      autoClose
+      options={[
+        {
+          text: '修改',
+          style: {
+            backgroundColor: color.brandColor
+          }
+        },
+        {
+          text: '删除',
+          style: {
+            backgroundColor: color.importantColor
+          }
+        }
+      ]}
+    >
+      <View className={classNames.invoiceCard}>
+        
+        {/* <View className={classNames.rightRadius}/> */}
+        <View className={classNames.invoiceTitle}>
+          抬头
+          <View className={classNames.leftRadius}/>
+        </View>
+        <View className={classNames.invoiceContent}>张三/15676545654</View>
+      </View>
+    </AtSwipeAction>
+  )
 }
 
-type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
-}
-
-type PageOwnProps = {}
-
-type PageState = {}
-
-type IProps = PageStateProps & PageDispatchProps & PageOwnProps
-
-interface Index {
-  props: IProps;
-}
-
-const Index:React.FC<IProps> = props => {
+const Invoice:React.FC<any> = props => {
   React.useEffect(() => {
     async function getBar() {
       
@@ -44,14 +49,17 @@ const Index:React.FC<IProps> = props => {
     getBar();
   },[Taro])
   return (
-    <View className='index'>
-      <Input/>
-      <View><Text>Invoice</Text></View>
-      
+    <View className={classNames.container}>
+      {/* <View style={{display: 'flex'}}>
+        <SearchAndScanBar onSearch={v => console.log('s--->',v)} placeholder='公司抬头'/>
+      </View> */}
+      <View className={classNames.invoiceContainer}>
+        <InvoiceCard/>
+      </View>
     </View>
   )
 }
 
 
-export default Index
+export default Invoice
 

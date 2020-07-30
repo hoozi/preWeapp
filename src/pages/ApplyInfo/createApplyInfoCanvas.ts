@@ -4,7 +4,7 @@ import { ApplyData } from '../../store/models/applyModel';
 import { color } from '../../constants';
 
 const systemInfo = Taro.getSystemInfoSync();
-const dpr = systemInfo.pixelRatio;
+
 
 interface ImageData {
   path: string;
@@ -63,18 +63,18 @@ export default function createApplyInfoCanvas(allPath:AllPath, data:Partial<Appl
       height
     }
   });
-  const canvasHeight:number = mapedDoorImages.reduce((sum, cur) => sum+cur.height,24)+218;
+  const canvasHeight:number = mapedDoorImages.reduce((sum, cur) => sum+cur.height,24)+230;
   setCanvasHeight(canvasHeight);
   ctx.fillStyle = color.brandColor;
   ctx.fillRect(0,0,systemInfo.windowWidth, canvasHeight);
   ctx.fillStyle = '#fff';
   ctx.fillRect(12,12,baseFullWidth, 180);
   ctx.drawImage(qrcodePath, 24, 24, 136, 136);
-  const serialSequenceWidth = ctx.measureText(serialSequenceText).width;
-  ctx.font = 'normal bold 13px Arial';
+  //const serialSequenceWidth = ctx.measureText(serialSequenceText).width;
+  ctx.font = 'normal bold 12px Arial';
   ctx.setTextAlign('left');
   ctx.fillStyle='#333';
-  ctx.fillText(serialSequenceText, serialSequenceWidth/2+6, 178);
+  ctx.fillText(serialSequenceText, 24, 178);
   createCanvasField(ctx, data);
   ctx.save();
   ctx.fillStyle = '#fff';

@@ -19,11 +19,11 @@ const ServiceCard:React.FC<ServiceCardProps> = ({
   data,
   onServiceSelect
 }) => {
-  const { postData } = useSelector((state:RootState) => state.applyModel);
+  const { data:applyData } = useSelector((state:RootState) => state.applyModel);
   return (
     <View className={classNames.item} onClick={() => onServiceSelect(data)}>
       <View className={classNames.thumn}>
-        <Text className={classNames.price}>¥{data.amount}</Text>
+        <Text className={classNames.price}>¥{data.price}</Text>
         <Text className={classNames.name}>预提包干费</Text>
       </View>
       <View className={classNames.content}>
@@ -41,10 +41,10 @@ const ServiceCard:React.FC<ServiceCardProps> = ({
       </View>
       <View className={
         classnames(classNames.radio, 'iconfont', {
-          'icon-Raidobox-weixuan': postData.service?.serviceProvider !== data.serviceProvider,
-          'icon-check-circle-fill': postData.service?.serviceProvider === data.serviceProvider
+          'icon-Raidobox-weixuan': applyData.receiverName !== data.serviceProvider,
+          'icon-check-circle-fill': applyData.receiverName === data.serviceProvider
         })
-      } style={{color: postData.service?.serviceProvider === data.serviceProvider ? color.brandColor : '#ddd'}}/>
+      } style={{color: applyData.receiverName === data.serviceProvider ? color.brandColor : '#ddd'}}/>
     </View>
   )
 }
@@ -52,19 +52,23 @@ const ServiceCard:React.FC<ServiceCardProps> = ({
 const Service:React.FC<any> = props => {
   const { data } = useSelector((state:RootState) => state.applyModel);
   const { applyModel } = useDispatch<RematchDispatch<Models>>();
-  const handleServiceSelect = React.useCallback((service) => {
+  const handleServiceSelect = React.useCallback((service:ServiceProviderData) => {
     applyModel.updatePostData({
-      service
+      receiverId: service.serviceProviderId,
+      busiType: service.providerType
+    });
+    applyModel.save({
+      amount: service.price,
+      receiverName: service.serviceProvider
     });
     Taro.navigateBack();
   }, [applyModel]);
   return (
     <View>
-      <SearchAndScanBar onSearch={v => console.log('s--->',v)} placeholder='服务商名称'/>
       <View className={classNames.container}>
         {
           data.serviceProviderData && data.serviceProviderData.map((item:ServiceProviderData) => {
-            return <ServiceCard key={item.serviceProvider} data={item} onServiceSelect={handleServiceSelect}/>
+            return <ServiceCard key={item.serviceProviderId} data={item} onServiceSelect={handleServiceSelect}/>
           })
         }
       </View>

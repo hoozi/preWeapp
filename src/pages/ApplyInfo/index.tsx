@@ -22,29 +22,33 @@ async function getImages(...srcs:string[]):Promise<any> {
 const ApplyInfo:React.FC<any> = props => {
   const { data } = useSelector((state:RootState) => state.applyModel);
   const [canvasHeight, setCanvasHeight] = React.useState<number>(900);
-  const [err, setErr] = React.useState<string>('')
   const handleApplyPerview = React.useCallback(() => {
+    console.log(1)
     Taro.canvasToTempFilePath({
       x: 0,
       y: 0,
-      canvasId: '#applyInfo',
+      canvasId: 'applyInfo',
       success(res) {
+        console.log(res)
         if(res.errMsg === 'canvasToTempFilePath:ok') {
           Taro.previewImage({
             current: res.tempFilePath,
             urls: [res.tempFilePath]
           });
         }
+      },
+      fail(e) {
+        console.log(e)
       }
     })
   }, []) 
-  Taro.useDidShow(() => {
+  React.useEffect(() => {
     Taro.showLoading({
       title: '生成中...'
     });
     async function createApplyInfoCanvasWithImage() {
       try {
-        const doorImages = await getImages('http://tl.nbport.com.cn/portal/static/images/index1.png','http://weihuanginfo.com/c11900d999619e720577b75b6094b087.jpg');
+        const doorImages = await getImages(data.ctnnoIMG || '', data.sealnoIMG || '');
         uqrcode.make({
           canvasId: 'qrcode',
           text: data.serialSequence,
@@ -58,18 +62,16 @@ const ApplyInfo:React.FC<any> = props => {
           }
         });
       } catch(e) {
-        setErr(JSON.stringify(e))
         Taro.showToast({
           title: '生成图片出错,请稍后再试',
           icon: 'none'
         })
       }
     }
-    createApplyInfoCanvasWithImage();
-  });
+    createApplyInfoCanvasWithImage(); 
+  }, [data]);
   return (
     <View className={classNames.container}>
-      <View>{err}</View>
       <Canvas canvasId='qrcode' style='position: fixed;top: -10000px;'/>
       <Canvas 
         canvasId='applyInfo'

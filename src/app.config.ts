@@ -1,10 +1,21 @@
 export default {
   pages: [
     'pages/Apply/index',
-    'pages/Invoice/index',
-    'pages/Camera/index',
-    'pages/Service/index',
-    'pages/ApplyInfo/index'
+    'pages/MyOrder/index'
+  ],
+  subpackages: [
+    {
+      root: 'pages/Service',
+      pages: [
+        'index'
+      ]
+    },
+    {
+      root: 'pages/ApplyInfo',
+      pages: [
+        'index'
+      ]
+    }
   ],
   tabBar: {
     custom: true,
@@ -20,10 +31,10 @@ export default {
         text: '预提申请'
       },
       {
-        pagePath: 'pages/Invoice/index',
+        pagePath: 'pages/MyOrder/index',
         iconPath: 'assets/images/1.png',
         selectedIconPath: 'assets/images/1_a.png',
-        text: '发票管理'
+        text: '我的订单'
       }
     ]
   },
