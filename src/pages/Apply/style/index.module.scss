@@ -69,7 +69,7 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
 }
 
 .fieldContent {
-  padding: 12px 0;
+  padding: 12PX 0;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   background-color: #fff;
@@ -79,7 +79,7 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   :global {
     .at-input {
       margin-left: 0;
-      padding:18px 24px;
+      padding:8PX 12PX;
       margin-bottom: 0;
       &__title, input {
         font-size: 14PX;
@@ -91,7 +91,7 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
     }
     .at-list__item {
       font-size: 14PX;
-      padding:18px 24px;
+      padding:8PX 12PX;
       &:after {
         display: none;
       }
@@ -170,7 +170,7 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:18px 24px;
+  padding:8PX 12PX;
   font-size: 14PX;
   /* @extend %bottomHairLine;
   &:after {

@@ -1,0 +1,37 @@
+.invoiceList {
+  margin-top: 12PX;
+  :global {
+    .at-list__item {
+      font-size: 14PX;
+      padding:12PX;
+    }
+    .item-extra__info {
+      font-size: 14PX;
+      padding-right: 0;
+    }
+    .item-extra__icon {
+      position: static;
+      transform: translateY(0);
+    }
+    .item-extra__icon-arrow {
+      margin-right: -6px;
+      font-size: 16PX;
+    }
+    .at-list__item-container {
+      justify-content: space-between;
+    }
+    .at-list__item-content {
+      flex: none;
+      -webkit-box-flex: none;
+      width: 100PX;
+      margin-right: 0;
+    }
+    .at-list__item-extra {
+      max-width: 100%;
+    }
+  }
+}
+
+.bottomButton {
+  padding: 12PX;
+}

@@ -14,7 +14,6 @@ import Empty from '../../components/Empty';
 import DateTimePicker from '../../components/DateTimePicker';
 import PriceCard from './components/PriceCard';
 import { hasError, tranformStatus, isHiddenField, fieldsList, payStatusMap, PayStatus } from './utils';
-import dayjs from 'dayjs';
 
 const { height, top } = Taro.getMenuButtonBoundingClientRect();
 
@@ -63,11 +62,14 @@ const ApplyField:React.FC<ApplyFieldProps> = ({
 }
 
 const Apply:React.FC<any> = props => {
+  const { params } = Taro.useRouter();
+  const { id='' } = params;
   const { data, postData } = useSelector((state:RootState) => state.applyModel);
   const { applyModel } = useDispatch<RematchDispatch<Models>>();
   const currentStatus = (data.status === '00' || data.status === '04') ? `${data.status}_${data.payStatus}` : data.status || '';
   const tranformedStatus = tranformStatus(
     currentStatus,
+    id,
     data.status === '00' && (data.payStatus === '01' || data.payStatus === '00') ? `(¥${data.amount || '0'})` : ''
   );
   const handleMobileChange = React.useCallback(mobile => {
@@ -98,10 +100,16 @@ const Apply:React.FC<any> = props => {
   const handleSubmit = React.useCallback((actionType, params) => {
     if(!!!actionType) return;
     const payload = params ? params(postData, data) : {}
-    applyModel.operate({
-      actionType,
-      payload
-    })
+    if(actionType === 'navigate') {
+      Taro.navigateTo({
+        url : payload.url
+      })
+    } else {
+      applyModel.operate({
+        actionType,
+        ...payload
+      })
+    }
   }, [postData]);
   Taro.usePullDownRefresh(() => {
     if(!isEmpty(data)) {
@@ -156,7 +164,7 @@ const Apply:React.FC<any> = props => {
           <View className={classNames.fieldContent}>
             <View className={classNames.fieldApplyContainer}>
               {
-                fieldsList(data).map(field => {
+                fieldsList(data, id).map(field => {
                   const { dataIndex, title, copy, extraStatus, textColor } = field;
                   const splitName = dataIndex.indexOf('/') > -1 ? dataIndex.split('/') : [];
                   const value = splitName.length ? `${data[splitName[0]] || '暂无'}/${data[splitName[1]] || '暂无'}` : data[dataIndex] || '暂无';
@@ -166,10 +174,10 @@ const Apply:React.FC<any> = props => {
             </View>
             <AtList className={classNames.contentList} hasBorder={false}>
             {
-              isHiddenField(data.status, data.payStatus) ?
+              isHiddenField(data.status, data.payStatus, id) ?
               <React.Fragment>
                 <DateTimePicker value={postData.deadline || ''} onChange={handleDateChange}>
-                  <AtListItem title='要求完成时间' hasBorder={false} className={classNames.arrow} extraText={postData.deadline || ''} arrow='right'/>
+                  <AtListItem title='要求完成时间' hasBorder={false} className={classNames.arrow} extraText={postData.deadline} arrow='right'/>
                 </DateTimePicker>
                 <AtListItem title='服务商' hasBorder={false} className={classNames.arrow} extraText={data.receiverName || '请选择'} arrow='right' onClick={() => Taro.navigateTo({
                   url: '/pages/Service/index'
@@ -187,11 +195,10 @@ const Apply:React.FC<any> = props => {
                 />
               </React.Fragment> :
                 data.status === '05' ? 
-                <AtList className={classNames.contentList} hasBorder={false}>
-                  <AtListItem title='预提信息' arrow='right' onClick={() => Taro.navigateTo({
+                  <AtListItem title='预提信息' extraText='查看详情' arrow='right' onClick={() => Taro.navigateTo({
                     url: '/pages/ApplyInfo/index'
                   })}/>
-                </AtList> : null
+                  : null
             }
           </AtList>
           </View>

@@ -2,7 +2,7 @@
 
 .container {
   &.containerDark {
-    background-image: linear-gradient(to bottom right, $color-brand, $color-brand-dark);
+    background-color: $color-brand;
   }
   &.fixed {
     position: fixed;

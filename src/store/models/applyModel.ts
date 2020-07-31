@@ -3,6 +3,7 @@ import { ModelEffects, ModelReducers, RematchDispatch, Models } from '@rematch/c
 import { RootState } from '../index';
 import { queryPre, postPre, payPre, withdrawPre, closePre, completePayPre } from '../../api/pre';
 import { ResponseData } from '../../shared/request';
+import dayjs from 'dayjs';
 //import dayjs from 'dayjs';
 
 export interface ApplyData {
@@ -163,7 +164,7 @@ const effects = (dispatch:RematchDispatch<Models>):ModelEffects<RootState> => ({
         this.updatePostData({
           serialSequence,
           mobile: response.applyUser,
-          deadline,
+          deadline: !deadline ? dayjs().format('YYYY-MM-DD HH:mm:ss') : deadline,
           receiverId: status === '04' || status === '03' ? '' : receiverId,
           openId
         });

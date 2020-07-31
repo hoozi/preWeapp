@@ -59,10 +59,10 @@ const CustomTabBarItem: React.FC<CustomTabBarItemProps> = ({
               }
             )
           } 
-          style={{color: selected === index ? color.brandColor : '#333'}}
+          style={{color: selected === index ? color.brandColor : '#666'}}
         />
       </View>
-        <View className='tab-bar-text' style={{color: selected === index ? color.brandColor : '#333', textAlign: 'center'}}>{text}</View>
+        <View className='tab-bar-text' style={{color: selected === index ? color.brandColor : '#666', textAlign: 'center'}}>{text}</View>
     </View>
   )
 }

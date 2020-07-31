@@ -15,6 +15,18 @@ export default {
       pages: [
         'index'
       ]
+    },
+    {
+      root: 'pages/InvoiceApply',
+      pages: [
+        'index'
+      ]
+    },
+    {
+      root: 'pages/Company',
+      pages: [
+        'index'
+      ]
     }
   ],
   tabBar: {
@@ -41,8 +53,8 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     backgroundColor: '#efefef',
-    navigationBarBackgroundColor: '#fff',
+    navigationBarBackgroundColor: '#2d75ff',
     navigationBarTitleText: 'WeChat',
-    navigationBarTextStyle: 'black'
+    navigationBarTextStyle: 'white'
   }
 }

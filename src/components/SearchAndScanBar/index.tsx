@@ -28,6 +28,7 @@ const SearchAndScanBar:React.FC<SearchAndScanBarProps> = ({
   dark,
   isHeader
 }) => {
+  const [ inputValue, setInputValue ] = React.useState<string>(value || '')
   const handleScanCode = React.useCallback(() => {
     onScanClick && onScanClick();
   }, []);
@@ -35,6 +36,9 @@ const SearchAndScanBar:React.FC<SearchAndScanBarProps> = ({
     paddingTop:!!isHeader ? top-1 : 12,
     paddingRight:!!isHeader ? windowWidth-left + 12 : 12
   }), [isHeader]);
+  const handleInput = React.useCallback((e) => {
+    setInputValue(e.detail.value)
+  }, [setInputValue]);
   return (
     <View 
       className={
@@ -58,10 +62,11 @@ const SearchAndScanBar:React.FC<SearchAndScanBarProps> = ({
         <Input 
           placeholder={placeholder} 
           placeholderStyle='color: #999' 
-          value={value} 
+          value={inputValue} 
           confirmType='search' 
-          onConfirm={e => onSearch(e.detail.value)} 
+          onConfirm={e => onSearch(inputValue)} 
           className={classNames.input}
+          onInput={handleInput}
         />
         {
           scan &&

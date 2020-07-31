@@ -1,4 +1,81 @@
+@import '../../../style/index.scss';
+
+.container {
+  //height: 100%;
+  padding: 12PX;
+  padding-bottom: calc(48PX + 18px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(48PX + 18px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
 .orderCard {
   border-radius: 6px;
   background-color: #fff;
+  margin-bottom: 12PX;
+  color: #333;
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 200%;
+    border: 1PX solid $color-border-base;
+    border-radius: 6px;
+    transform-origin: 0 0;
+    transform: scale(.5);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .orderCardHeader {
+    font-weight: bold;
+    display: flex;
+    padding: 12PX;
+    justify-content: space-between;
+    align-items: center;
+    border-top-right-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    //background-color: #f7f7f7;
+    .orderStatusItem {
+      color: $color-brand;
+      background-color: #e6f7ff;
+      border-radius: 6px;
+      display: inline-block;
+      padding:2PX 4PX;
+      font-size: 12PX;
+      margin-left: 4PX;
+    }
+  }
+  .orderCardBody {
+    @extend %topHairLine;
+    padding: 12PX;
+    .orderContent {
+     // padding: 12PX;
+      color: #555;
+      .orderItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4PX;
+        &:last-child {
+          margin-bottom: 0;
+        }
+        .orderName,
+        .orderValue {
+          display: inline-block;
+        }
+        .orderName {
+          width: 64PX;
+          color: #999;
+          text-align: justify;
+          text-align-last: justify;
+          //text-justify: ;
+        }
+        .orderValue {
+        }
+      }
+    }
+  }
 }

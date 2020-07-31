@@ -79,10 +79,10 @@ export const hiddenFieldMap:{ [key: string]:boolean } = {
   '04_01': true
 }
 
-export const isHiddenField = (status?:string | null, payStatus?:string | null) => hiddenFieldMap[`${status}_${payStatus}`];
+export const isHiddenField = (status?:string | null, payStatus?:string | null, id?:string) => hiddenFieldMap[`${status}_${payStatus}`] && !id;
 
-export const fieldsList = (data:Partial<ApplyData>):Field[] => {
-  const hidden:boolean = isHiddenField(data.status, data.payStatus)
+export const fieldsList = (data:Partial<ApplyData>, id?:string):Field[] => {
+  const hidden:boolean = isHiddenField(data.status, data.payStatus, id)
  // const extraStatus = !data.payStatus? payStatusMap['-999'] : payStatusMap[data.payStatus]
   return [
     {
@@ -129,13 +129,14 @@ export const fieldsList = (data:Partial<ApplyData>):Field[] => {
     }
   ]
 }
-export const tranformStatus = (status:string, payExtraText?:string):Status => {
+export const tranformStatus = (status:string, id:string, payExtraText?:string):Status => {
   let statusMap:StatusMap;
   if(status.indexOf('_') > -1) {
     statusMap = {
       '00_null': {
         text: '未下单',
         color: color.brandColor,
+        buttonHidden: !!id,
         buttons: [{
           buttonText: '下单',
           buttonColor: color.brandColor,
@@ -148,6 +149,7 @@ export const tranformStatus = (status:string, payExtraText?:string):Status => {
       '04_00': {
         text: '订单关闭',
         color: color.brandColor,
+        buttonHidden: !!id,
         buttons: [{
           buttonText: '下单',
           buttonColor: color.brandColor,
@@ -245,12 +247,30 @@ export const tranformStatus = (status:string, payExtraText?:string):Status => {
       '03': {
         text: '申请失败',
         color: color.warningColor,
-        buttonHidden: true
+        buttonHidden: !!id,
+        buttons: [{
+          buttonText: '下单',
+          buttonColor: color.brandColor,
+          actionType: 'postPre',
+          params(postData) {
+            return postData
+          }
+        }]
       },
       '05': {
         text: '已完成',
         color: color.successColor,
-        buttonHidden: true
+        buttons: [{
+          buttonText: '申请开票',
+          buttonColor: color.brandColor,
+          actionType: 'navigate',
+          params(_, data) {
+            const { serialSequence } = data;
+            return {
+              url: `/pages/InvoiceApply/index?serialSequence=${serialSequence}`
+            }
+          }
+        }]
       }
     }
   }

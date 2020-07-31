@@ -1,0 +1,19 @@
+.companyContainer {
+  :global {
+    .at-radio__title {
+      font-size: 14PX;
+    }
+    .at-radio__desc {
+      font-size: 12PX;
+    }
+    .at-radio__option  {
+      padding-left: 12PX;
+    }
+    .at-radio__option-wrap {
+      padding: 12PX 16PX 12PX 0;
+    }
+    .at-radio__icon .at-icon {
+      font-size: 16PX;
+    }
+  }
+}
