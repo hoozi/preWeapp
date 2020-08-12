@@ -31,6 +31,7 @@ export interface ApplyData {
   applyUser: string | null;
   serviceProviderData: ServiceProviderData[];
   openId: string | null;
+  kpStatus: string | null;
   [key: string] : any;
 }
 
@@ -72,7 +73,7 @@ const serviceMap:ServiceMap = {
   },
   'payPre': {
     successText: '支付成功',
-    api:completePayPre
+    api:payPre
   },
   'closePre': {
     successText: '关闭成功',
@@ -85,44 +86,7 @@ const serviceMap:ServiceMap = {
 }
 
 const state:Apply = {
-  data: {} /* {
-    serialSequence: 's12344',
-    yardName: '天翔堆场',
-    vesselName: 'ship',
-    vesselVoyage: '001E',
-    blno: 'bill12345',
-    ctnSizeType: '20GP',
-    ctnOperatorCode: 'EMC',
-    amount: '',
-    status: '05',
-    ctnno: 'CTN1234567',
-    sealno: 'seal12345',
-    mobile: '15867564789',
-    ctnnoIMG: '',
-    sealnoIMG: '',
-    deadline: '',
-    receiverName: '',
-    serviceProviderData: [
-      {
-        serviceProvider: '堆场1',
-        amount: '1234',
-        averageAuditTime: '30',
-        monthlyCompletedUnitQuantity: '333'
-      },
-      {
-        serviceProvider: '堆场2',
-        amount: '1234',
-        averageAuditTime: '20',
-        monthlyCompletedUnitQuantity: '33'
-      },
-      {
-        serviceProvider: '堆场3',
-        amount: '1234',
-        averageAuditTime: '70',
-        monthlyCompletedUnitQuantity: '43'
-      }
-    ]
-  } */,
+  data: {},
   postData: {}
 }
 const reducers:ModelReducers<Apply> = {
@@ -150,9 +114,12 @@ const reducers:ModelReducers<Apply> = {
   }
 }
 const effects = (dispatch:RematchDispatch<Models>):ModelEffects<RootState> => ({
-  async fetchPre(payload) {
+  async fetchPre(payload, rootState) {
     const { callback, ...restPayload } = payload;
-    const openId:string = 'ohrC7w_Zik9a-ZSmn_USCVVHrvME';
+    const openId = rootState.common.openId || (await dispatch.common.fetchOpenId());
+    if(!restPayload.id) {
+      dispatch.history.save({currentId:''});
+    }
     try {
       const response = await queryPre<ApplyData>({
         ...restPayload,
@@ -177,23 +144,31 @@ const effects = (dispatch:RematchDispatch<Models>):ModelEffects<RootState> => ({
     }
   },
   async operate(payload, rootState) {
-    const { actionType, ...restPayload } = payload;
-    const response = await serviceMap[actionType].api<ResponseData>(restPayload);
-    if(response.success) {
-      Taro.showToast({
-        title: serviceMap[actionType].successText,
-        icon: 'success',
-        mask: true,
-        duration: 2000,
-        success() {
-          setTimeout(() => {
-            dispatch.applyModel.fetchPre({
-              serialSequence: rootState.applyModel.data.serialSequence,
-              openId: rootState.applyModel.data.openId
-            });
-          },2000)
+    const { actionType, callback, ...restPayload } = payload;
+    try {
+      const response = await serviceMap[actionType].api<ResponseData>(restPayload);
+      if(response.success) {
+        if(actionType === 'payPre') {
+          callback && callback(response.result);
+        } else {
+          Taro.showToast({
+            title: serviceMap[actionType].successText,
+            icon: 'success',
+            mask: true,
+            duration: 2000,
+            success() {
+              setTimeout(() => {
+                dispatch.applyModel.fetchPre({
+                  serialSequence: rootState.applyModel.data.serialSequence,
+                  openId: rootState.applyModel.data.openId
+                });
+              },2000)
+            }
+          });         
         }
-      });
+      }
+    } catch(e) {
+      console.log(e)
     }
   }
 })

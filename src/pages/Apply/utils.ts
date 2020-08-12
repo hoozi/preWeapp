@@ -1,3 +1,4 @@
+import * as Taro from '@tarojs/taro';
 import { PostData } from '../../store/models/applyModel';
 import { color } from '../../constants';
 import { ApplyData } from '../../store/models/applyModel';
@@ -48,35 +49,62 @@ const errorField:string[] = [
 ]
 export const hasError = (postData:Partial<PostData>) => errorField.some(error => !postData[error]);
 
+export const payStatus4Length:string[] = [
+  '2',
+  '3',
+  '6',
+  '7',
+  '8'
+]
+
 export const payStatusMap:PayStatusMap = {
   '-999': {
     color: '',
     text: ''
   },
-  '00': {
+  '0': {
     color: color.importantColor,
     text: '未支付'
   },
-  '01': {
-    color: color.warningColor,
-    text: '待支付'
-  },
-  '02': {
+  '1': {
     color: color.successColor,
     text: '已支付'
   },
-  '03': {
+  '2': {
+    color: color.importantColor,
+    text: '支付失败'
+  },
+  '3': {
+    color: color.importantColor,
+    text: '取消支付'
+  },
+  '4': {
     color: color.warningColor,
-    text: '退款'
+    text: '处理中'
+  },
+  '5': {
+    color: color.warningColor,
+    text: '退款中'
+  },
+  '6': {
+    color: color.successColor,
+    text: '退款成功'
+  },
+  '7': {
+    color: color.brandColor,
+    text: '无需支付'
+  },
+  '8': {
+    color: color.importantColor,
+    text: '退款失败'
   }
-  
 }
 
 export const hiddenFieldMap:{ [key: string]:boolean } = {
   '00_null': true,
   //'00_00': true,
-  '04_00': true,
-  '04_01': true
+  '04_0': true,
+  '04_1': true
 }
 
 export const isHiddenField = (status?:string | null, payStatus?:string | null, id?:string) => hiddenFieldMap[`${status}_${payStatus}`] && !id;
@@ -119,7 +147,7 @@ export const fieldsList = (data:Partial<ApplyData>, id?:string):Field[] => {
     },
     {
       title: '服务商',
-      dataIndex: 'serviceProvider',
+      dataIndex: 'receiverName',
       hidden
     },
     {
@@ -146,7 +174,7 @@ export const tranformStatus = (status:string, id:string, payExtraText?:string):S
           }
         }]
       },
-      '04_00': {
+      '04_0': {
         text: '订单关闭',
         color: color.brandColor,
         buttonHidden: !!id,
@@ -159,7 +187,7 @@ export const tranformStatus = (status:string, id:string, payExtraText?:string):S
           }
         }]
       },
-      '00_00': {
+      '00_0': {
         text: '已下单',
         color: color.brandColor,
         buttons: [
@@ -182,15 +210,17 @@ export const tranformStatus = (status:string, id:string, payExtraText?:string):S
             buttonColor: color.brandColor,
             actionType: 'payPre',
             params(_, data) {
-              const { busiNo } = data;
+              const { busiNo, serialSequence, openId } = data;
               return {
-                busiNo
+                busiNo,
+                serialSequence,
+                openId
               }
             }
           }
         ]
       },
-      '00_01': {
+      /* '00_01': {
         text: '已下单',
         color: color.warningColor,
         buttons: [
@@ -220,7 +250,7 @@ export const tranformStatus = (status:string, id:string, payExtraText?:string):S
             }
           }
         ]
-      }
+      } */
     }
   } else {
     statusMap = {

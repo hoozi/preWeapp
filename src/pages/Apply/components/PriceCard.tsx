@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { View, Text } from '@tarojs/components';
 import classNames from '../style/index.module.scss';
-import { PayStatus } from '../utils';
+import { PayStatus, payStatus4Length, payStatusMap } from '../utils';
 
 interface PriceCardProps {
   price:string;
-  status: PayStatus | null
+  status: string | null
 }
 
 const PriceCard:React.FC<PriceCardProps> = ({
@@ -18,10 +18,21 @@ const PriceCard:React.FC<PriceCardProps> = ({
         ¥{price}
         {
           status &&
-          <Text className={classNames.payStatus} style={{ borderColor: status.color, color: status.color}}>{status.text}</Text>
+          <Text 
+            className={classNames.payStatus} 
+            style={{ 
+              borderColor: payStatusMap[status].color, 
+              color: payStatusMap[status].color, 
+              right: payStatus4Length.includes(status) ? -52 : -42
+            }}
+          >
+            {payStatusMap[status].text}
+          </Text>
         }
       </View>
       <View className={classNames.priceCardFieldName}>预提包干费</View>
+      <View className={classNames.bottomLeftRadius}/>
+      <View className={classNames.bottomRightRadius}/>
     </View>
   )
 }

@@ -20,3 +20,7 @@ declare const process: {
     [key: string]: any;
   }
 }
+
+declare const __wxConfig: {
+  envVersion: 'develop' | 'trial' | 'release';
+};

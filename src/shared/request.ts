@@ -1,6 +1,13 @@
 import Taro, { RequestParams } from '@tarojs/taro';
 
-const SERVICE_URL = 'http://test.nbport.com.cn:8081'
+const { envVersion } = __wxConfig;
+const seriveUrlMap: {[key:string] : string} = {
+  'develop': 'http://test.nbport.com.cn:8081',
+  'trial': 'http://test.nbport.com.cn:8081',
+  'release': 'https://www.eporthub.com:8443'
+}
+
+console.log(envVersion)
 
 interface CodeMessage {
   [code: string]: string;
@@ -85,7 +92,7 @@ export default function request<T>(options: Options): Promise<T> {
     };
     newOptions.data = JSON.stringify(newOptions.data);
   }
-  newOptions.url = `${SERVICE_URL}${newOptions.url}`;
+  newOptions.url = `${seriveUrlMap[envVersion]}${newOptions.url}`;
   return Taro.request(newOptions)
     .then(res => {
       Taro.hideLoading();

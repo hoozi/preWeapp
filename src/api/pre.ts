@@ -2,13 +2,15 @@ import request from '../shared/request';
 
 interface QueryPreParam {
   serialSequence: string;
+  id?: string
 }
 
 export async function queryPre<T>(data:QueryPreParam) {
+  const byId:boolean = !!data.id;
   return request<T>({
-    url: '/preEmpty/preQuery',
+    url: `/preEmpty/${!byId? 'preQuery' : 'preQueryById'}`,
     data,
-    loadingText: '查询中...',
+    loadingText: '正在查询',
     onlyData: true
   })
 }
@@ -17,7 +19,7 @@ export async function postPre<T>(data) {
   return request<T>({
     url: '/preEmpty/preSubmit',
     data,
-    loadingText: '下单中...'
+    loadingText: '正在下单'
   })
 }
 

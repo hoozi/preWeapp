@@ -23,22 +23,17 @@ const ApplyInfo:React.FC<any> = props => {
   const { data } = useSelector((state:RootState) => state.applyModel);
   const [canvasHeight, setCanvasHeight] = React.useState<number>(900);
   const handleApplyPerview = React.useCallback(() => {
-    console.log(1)
     Taro.canvasToTempFilePath({
       x: 0,
       y: 0,
       canvasId: 'applyInfo',
       success(res) {
-        console.log(res)
         if(res.errMsg === 'canvasToTempFilePath:ok') {
           Taro.previewImage({
             current: res.tempFilePath,
             urls: [res.tempFilePath]
           });
         }
-      },
-      fail(e) {
-        console.log(e)
       }
     })
   }, []) 

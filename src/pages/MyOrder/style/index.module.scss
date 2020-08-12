@@ -1,7 +1,10 @@
 @import '../../../style/index.scss';
 
 .container {
-  //height: 100%;
+  height: 100%;
+}
+
+.historyContainer {
   padding: 12PX;
   padding-bottom: calc(48PX + 18px + constant(safe-area-inset-bottom));
   padding-bottom: calc(48PX + 18px + env(safe-area-inset-bottom));
@@ -9,12 +12,15 @@
 }
 
 .orderCard {
-  border-radius: 6px;
+  border-radius: 12px;
   background-color: #fff;
   margin-bottom: 12PX;
   color: #333;
   position: relative;
-  &:before {
+  &.highlight {
+    background-color: #f9f9f9;
+  }
+  /* &:before {
     content: "";
     position: absolute;
     left: 0;
@@ -22,16 +28,37 @@
     width: 200%;
     height: 200%;
     border: 1PX solid $color-border-base;
-    border-radius: 6px;
+    border-radius: 24px;
     transform-origin: 0 0;
     transform: scale(.5);
     box-sizing: border-box;
     pointer-events: none;
+  } */
+  .orderType {
+    //display: inline-block;
+    //align-items: center;
+    //justify-content: center;
+    padding: 4PX 12PX;
+    //width: 100%;
+    box-sizing: border-box;
+    background-color: #f6ffed;
+    line-height: 1;
+    color: $color-success;
+    font-size: 12PX;
+    border-top-left-radius: 12px;
+    border-bottom-right-radius:12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    &.orderType2 {
+      background-color: #fffbe6;
+      color: $color-warning
+    }
   }
   .orderCardHeader {
     font-weight: bold;
     display: flex;
-    padding: 12PX;
+    padding: 26PX 12PX 8PX 12PX;
     justify-content: space-between;
     align-items: center;
     border-top-right-radius: 6px;
@@ -47,18 +74,22 @@
       font-size: 12PX;
       margin-left: 4PX;
     }
+    
   }
   .orderCardBody {
-    @extend %topHairLine;
-    padding: 12PX;
+    //@extend %topHairLine;
+    padding:0 12PX 12PX;
     .orderContent {
      // padding: 12PX;
+      padding: 8PX;
+      background-color: #f7f7f7;
       color: #555;
+      border-radius: 12px;
       .orderItem {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 4PX;
+        margin-bottom: 6PX;
         &:last-child {
           margin-bottom: 0;
         }
@@ -68,12 +99,15 @@
         }
         .orderName {
           width: 64PX;
-          color: #999;
+          color: #777;
           text-align: justify;
           text-align-last: justify;
+          margin-right: 12PX;
           //text-justify: ;
         }
         .orderValue {
+          flex:1;
+          text-align: right;
         }
       }
     }

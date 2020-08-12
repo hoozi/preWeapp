@@ -1,8 +1,9 @@
 import { ModelEffects, ModelReducers } from '@rematch/core';
 import { RootState } from '../index';
+import { queryOpendId } from '../../api/common';
 import * as Taro from '@tarojs/taro';
 
-interface User {
+/* interface User {
   avatarUrl: string;
   city: string;
   country: string;
@@ -10,29 +11,15 @@ interface User {
   language: string;
   nickName: string;
   province: string;
-}
-
-interface GlobalData {
-  statusBarHeight: number;
-  screenHeight: number;
-  headHeight: number
-}
+} */
 
 export type Common = {
-  code: string;
-  userInfo: Partial<User>;
-  globalData: GlobalData;
+  openId: string;
   tabBarSelected: number;
 }
 
 const state:Common = {
-  code:'',
-  userInfo:{},
-  globalData: {
-    statusBarHeight: 0,
-    screenHeight: 0,
-    headHeight: 0
-  },
+  openId: '',//'openId1234ertrea_dweeerrr',
   tabBarSelected: 0
 }
 const reducers:ModelReducers<Common> = {
@@ -41,38 +28,18 @@ const reducers:ModelReducers<Common> = {
   }
 }
 const effects:ModelEffects<RootState> = {
-  async wxLogin() {
+  async fetchOpenId() {
     try {
-      const response = await Taro.login();
-      const { code } = response
-      this.save({code})
-    } catch(e) {
-      throw e
-    }
-  },
-  async getUserInfoFromWX() {
-    try {
-      const response = await Taro.getUserInfo();
-      const { userInfo } = response;
-      this.save({userInfo})
-    } catch(e) {
-      throw e
-    }
-  },
-  async getSystemInfoFromWX() {
-    try {
-      const response = await Taro.getSystemInfo();
-      const { screenHeight, statusBarHeight } = response;
-      this.save({
-        globalData: {
-          statusBarHeight,
-          screenHeight,
-          headHeight: screenHeight - statusBarHeight
-        }
-      })
-    } catch(e) {
-      throw e
-    }
+      const wxResponse = await Taro.login();
+      const { code } = wxResponse;
+      const openId:string = await queryOpendId({code});
+      if(openId) {
+        this.save({
+          openId
+        });
+      }
+      return openId;
+    } catch(e) {console.log(e)}
   }
 }
 

@@ -17,10 +17,12 @@ const loadingPlugin:Plugin = createLoadingPlugin(options)
 
 import common, { Common as CommonState } from './models/common';
 import applyModel, { Apply as ApplyState } from './models/applyModel';
+import history, { History as HistoryState } from './models/history';
 
 const models = {
   common,
-  applyModel
+  applyModel,
+  history
 }
 
 export type RootModels = typeof models;
@@ -38,6 +40,7 @@ export interface LoadingState<M extends Models> {
 export type RootState = {
   common: CommonState;
   applyModel: ApplyState;
+  history: HistoryState
 }
 
 const store:RematchStore = init({

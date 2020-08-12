@@ -1,9 +1,9 @@
 import * as React from 'react';
+import * as Taro from '@tarojs/taro';
 import { View, Text } from '@tarojs/components';
 import classnames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { RematchDispatch, Models } from '@rematch/core';
-import * as Taro from '@tarojs/taro';
 import { AtList, AtListItem, AtInput, AtButton } from 'taro-ui';
 import isEmpty from 'lodash/isEmpty';
 import { color } from '../../constants';
@@ -11,11 +11,10 @@ import SearchAndScanBar from '../../components/SearchAndScanBar';
 import { RootState } from '../../store';
 import classNames from './style/index.module.scss';
 import Empty from '../../components/Empty';
+import HeadSearchLayout from '../../layouts/HeadSearchLayout';
 import DateTimePicker from '../../components/DateTimePicker';
 import PriceCard from './components/PriceCard';
-import { hasError, tranformStatus, isHiddenField, fieldsList, payStatusMap, PayStatus } from './utils';
-
-const { height, top } = Taro.getMenuButtonBoundingClientRect();
+import { hasError, tranformStatus, isHiddenField, fieldsList, PayStatus } from './utils';
 
 interface ApplyFieldProps {
   title: string;
@@ -62,16 +61,22 @@ const ApplyField:React.FC<ApplyFieldProps> = ({
 }
 
 const Apply:React.FC<any> = props => {
-  const { params } = Taro.useRouter();
-  const { id='' } = params;
   const { data, postData } = useSelector((state:RootState) => state.applyModel);
+  const { currentId:id } = useSelector((state:RootState) => state.history);
   const { applyModel } = useDispatch<RematchDispatch<Models>>();
   const currentStatus = (data.status === '00' || data.status === '04') ? `${data.status}_${data.payStatus}` : data.status || '';
   const tranformedStatus = tranformStatus(
     currentStatus,
     id,
-    data.status === '00' && (data.payStatus === '01' || data.payStatus === '00') ? `(¥${data.amount || '0'})` : ''
+    data.status === '00' && data.payStatus === '0' ? `(¥${data.amount || '0'})` : ''
   );
+  React.useEffect(() => {
+    if(id) {
+      applyModel.fetchPre({
+        id
+      });
+    } 
+  }, [id, applyModel])
   const handleMobileChange = React.useCallback(mobile => {
     applyModel.updatePostData({
       mobile
@@ -107,6 +112,37 @@ const Apply:React.FC<any> = props => {
     } else {
       applyModel.operate({
         actionType,
+        callback: actionType === 'payPre' ? async data => {
+          if(typeof data === 'string') {
+            return Taro.showToast({
+              title: data,
+              icon: 'none',
+              mask: true,
+              duration: 2000,
+              success() {
+                const { serialSequence } = postData;
+                setTimeout(() => {
+                  applyModel.fetchPre({
+                    serialSequence
+                  });
+                }, 2000);
+              }
+            })
+          }
+          const { 
+            timeStamp,
+            nonceStr,
+            signType,
+            paySign
+          } = data;
+          const response = await Taro.requestPayment({
+            timeStamp,
+            nonceStr,
+            package: data.package,
+            paySign,
+            signType
+          });
+        } : undefined,
         ...payload
       })
     }
@@ -125,15 +161,13 @@ const Apply:React.FC<any> = props => {
     }
   });
   return (
-    <View className={classNames.container} style={{
-      paddingTop: `calc(${top+12}px + ${height+4}px)`
-    }}>
+    <HeadSearchLayout className={classNames.container}>
       <SearchAndScanBar 
         placeholder='序列号'
         fixed 
         dark
         scan 
-        value={postData?.serialSequence??''} 
+        value={postData.serialSequence || ''} 
         onSearch={handleSearchApply}
         onScanClick={handleScanCode}
         isHeader
@@ -157,10 +191,10 @@ const Apply:React.FC<any> = props => {
             <View style={{color: tranformedStatus.color, fontWeight:'bold'}}>
               <Text>{tranformedStatus.text}</Text>
             </View>
-            <View className={classNames.topLeftRadius}/>
-            <View className={classNames.topRightRadius}/>
+            <View className={classNames.bottomLeftRadius}/>
+            <View className={classNames.bottomRightRadius}/>
           </View>
-          <PriceCard status={data.payStatus ? payStatusMap[data.payStatus]: null} price={Number(data.amount).toFixed(2)}/>
+          <PriceCard status={data.payStatus || null} price={Number(data.amount).toFixed(2)}/>
           <View className={classNames.fieldContent}>
             <View className={classNames.fieldApplyContainer}>
               {
@@ -172,14 +206,13 @@ const Apply:React.FC<any> = props => {
                 })
               }
             </View>
-            <AtList className={classNames.contentList} hasBorder={false}>
             {
               isHiddenField(data.status, data.payStatus, id) ?
-              <React.Fragment>
+              <AtList className={classNames.contentList} hasBorder={false}>
                 <DateTimePicker value={postData.deadline || ''} onChange={handleDateChange}>
-                  <AtListItem title='要求完成时间' hasBorder={false} className={classNames.arrow} extraText={postData.deadline} arrow='right'/>
+                  <AtListItem title='要求完成时间' className={classNames.arrow} extraText={postData.deadline} arrow='right'/>
                 </DateTimePicker>
-                <AtListItem title='服务商' hasBorder={false} className={classNames.arrow} extraText={data.receiverName || '请选择'} arrow='right' onClick={() => Taro.navigateTo({
+                <AtListItem title='服务商' className={classNames.arrow} extraText={data.receiverName || '请选择'} arrow='right' onClick={() => Taro.navigateTo({
                   url: '/pages/Service/index'
                 })}/>
                 <AtInput
@@ -193,17 +226,23 @@ const Apply:React.FC<any> = props => {
                   type='phone'
                   onChange={handleMobileChange}
                 />
-              </React.Fragment> :
-                data.status === '05' ? 
-                  <AtListItem title='预提信息' extraText='查看详情' arrow='right' onClick={() => Taro.navigateTo({
+            </AtList> : 
+              data.status === '05' ?
+              <AtList className={classNames.contentList} hasBorder={false}>
+                <AtListItem title='预提信息' hasBorder={!!data.kpStatus} extraText='查看详情' arrow='right' onClick={() => Taro.navigateTo({
+                  url: '/pages/ApplyInfo/index'
+                })}/>
+                {
+                  data.kpStatus &&
+                  <AtListItem title='开票信息' hasBorder={false} extraText='查看详情' arrow='right' onClick={() => Taro.navigateTo({
                     url: '/pages/ApplyInfo/index'
                   })}/>
-                  : null
-            }
-          </AtList>
+                }
+              </AtList> : null
+          }
           </View>
           {
-            !tranformedStatus.buttonHidden &&
+            (!tranformedStatus.buttonHidden && !data.kpStatus) &&
             <View className={classNames.payButton}>
               {
                 tranformedStatus.buttons && tranformedStatus.buttons.map(button => {
@@ -229,7 +268,7 @@ const Apply:React.FC<any> = props => {
         </View> : <Empty/>
       }
       
-    </View>
+    </HeadSearchLayout>
   )
 }
 

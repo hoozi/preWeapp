@@ -23,6 +23,27 @@ interface CanvasField {
   value?:string
 }
 
+function drawText(ctx,t,x,y,w){
+  //参数说明
+  //ctx：canvas的 2d 对象，t：绘制的文字，x,y:文字坐标，w：文字最大宽度
+  let chr = t.split('')
+  let temp = ''
+  let row:string[] = []
+
+  for (let a = 0; a<chr.length;a++){
+      if( ctx.measureText(temp).width < w && ctx.measureText(temp+(chr[a])).width <= w){
+          temp += chr[a];
+      }else{
+          row.push(temp);
+          temp = chr[a];
+      }
+  }
+  row.push(temp)
+  for(let b=0;b<row.length;b++){
+      ctx.fillText(row[b],x,y+(b+1)*18);//每行字体y坐标间隔20
+  }
+}
+
 const createCanvasField = (ctx, data) => {
   const fields:CanvasField[] = [
     {
@@ -34,25 +55,30 @@ const createCanvasField = (ctx, data) => {
       dataIndex: 'sealno'
     },
     {
+      title: '预提包干费',
+      dataIndex:'amount'
+    },
+    {
       title: '联系人',
-      dataIndex: '-'
+      dataIndex: 'contacts'
     },
     {
       title: '联系方式',
-      dataIndex: 'mobile'
+      dataIndex: 'contactInformation'
     },
     {
       title: '提箱地点',
-      dataIndex: '-'
+      dataIndex: 'contactAddress'
     }
   ];
   fields.forEach((field, index) => {
-    ctx.fillText(`${field.title}: ${data[field.dataIndex] || '暂无'}`, 170, 38+(index*22))
+    drawText(ctx, `${field.title}: ${field.dataIndex === 'amount' ? '¥ ' + data[field.dataIndex] : (data[field.dataIndex] || '暂无')}`, 155, 64+(index*18), systemInfo.windowWidth - 170)
   });
 }
 export default function createApplyInfoCanvas(allPath:AllPath, data:Partial<ApplyData>, setCanvasHeight:Dispatch<number>){
   const { qrcodePath, doorImages } = allPath;
-  const serialSequenceText = `序列号:${data.serialSequence || ''}`;
+  const serialSequenceText:string = `序列号:${data.serialSequence || ''}`;
+  const title:string = '预提专用'
   const ctx = Taro.createCanvasContext('applyInfo');
   const baseFullWidth:number = systemInfo.windowWidth - 24;
   const imageFullWidth:number = systemInfo.windowWidth - 48
@@ -63,26 +89,32 @@ export default function createApplyInfoCanvas(allPath:AllPath, data:Partial<Appl
       height
     }
   });
-  const canvasHeight:number = mapedDoorImages.reduce((sum, cur) => sum+cur.height,24)+230;
+  const canvasHeight:number = mapedDoorImages.reduce((sum, cur) => sum+cur.height,24)+274;
   setCanvasHeight(canvasHeight);
   ctx.fillStyle = color.brandColor;
   ctx.fillRect(0,0,systemInfo.windowWidth, canvasHeight);
+
+  ctx.fillStyle = color.brandColorTap;
+  ctx.fillRect(12, 12, baseFullWidth, 32)
   ctx.fillStyle = '#fff';
-  ctx.fillRect(12,12,baseFullWidth, 180);
-  ctx.drawImage(qrcodePath, 24, 24, 136, 136);
+  ctx.font = 'normal bold 24px Arial';
+  ctx.fillText(title, (baseFullWidth-ctx.measureText(title).width)/2+20, 38);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(12,56,baseFullWidth, 180);
+  ctx.drawImage(qrcodePath, 24, 68, 120, 120);
   //const serialSequenceWidth = ctx.measureText(serialSequenceText).width;
   ctx.font = 'normal bold 12px Arial';
   ctx.setTextAlign('left');
   ctx.fillStyle='#333';
-  ctx.fillText(serialSequenceText, 24, 178);
+  ctx.fillText(serialSequenceText, 24, 200);
   createCanvasField(ctx, data);
   ctx.save();
   ctx.fillStyle = '#fff';
-  ctx.fillRect(12,206,baseFullWidth, mapedDoorImages.reduce((sum, cur) => sum+cur.height,36));
+  ctx.fillRect(12,250,baseFullWidth, mapedDoorImages.reduce((sum, cur) => sum+cur.height,36));
   mapedDoorImages.reduce((pre, cur) => {
     ctx.drawImage(cur.path, 24, pre+12, imageFullWidth, cur.height);
     return cur.height+pre+12
-  },204);
+  },248);
   ctx.draw();
   Taro.hideLoading();
 };

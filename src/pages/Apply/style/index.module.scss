@@ -14,7 +14,6 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
 .container {
   height: 100%;
   box-sizing: border-box;
-  //padding-top: calc(24PX + 64px);
 }
 .orderContainer {
   padding: 12PX 12PX 0;
@@ -30,13 +29,13 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   width: 24px;
   height: 24px;
   border-radius: 100px;
-  z-index: 1;
+  z-index: 10;
 }
 
 .status {
   //width: 100%;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -44,14 +43,14 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   padding: 24px;
   position: relative;
   background-color: #f7f7f7;
-  .topLeftRadius, .topRightRadius {
+  .bottomLeftRadius, .bottomRightRadius {
     @extend .radius;
     bottom: -11px;
   }
-  .topLeftRadius {
+  .bottomLeftRadius {
     left: -11px;
   }
-  .topRightRadius {
+  .bottomRightRadius {
     right: -11px;
   }
   /* &:after {
@@ -69,13 +68,16 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
 }
 
 .fieldContent {
-  padding: 12PX 0;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  background-color: #fff;
+  /* padding: 12PX 0;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  background-color: #fff; */
 }
 
 .contentList {
+  margin-top: 12PX;
+  border-radius: 12px;
+  padding: 12px 0;
   :global {
     .at-input {
       margin-left: 0;
@@ -93,19 +95,22 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
       font-size: 14PX;
       padding:8PX 12PX;
       &:after {
-        display: none;
+        //display: none;
+        border-bottom-color: $color-border-base;
       }
     }
     .item-extra__info {
       font-size: 14PX;
-      padding-right: 0;
+      padding-right: 18px;
+      word-break: word-all;
+      white-space: normal;
     }
     .item-extra__icon {
-      position: static;
-      transform: translateY(0);
+      /* position: static;
+      transform: translateY(0); */
     }
     .item-extra__icon-arrow {
-      margin-right: -6px;
+      margin-right: -2px;
       font-size: 16PX;
     }
     .at-list__item-container {
@@ -119,6 +124,7 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
     }
     .at-list__item-extra {
       max-width: 100%;
+      flex:1;
     }
   }
   
@@ -135,8 +141,6 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   right: 0;
   top: auto;
   background-color: #fff;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
   position: fixed;
   display: flex;
   :global {
@@ -163,8 +167,9 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
 
 .fieldApplyContainer {
   background-color: #fff;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 12PX 0;
 }
 .applyField {
   display: flex;
@@ -180,13 +185,15 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
     flex:1;
     display: flex;
     .applyLabel {
+      text-align: left;
       width: 100PX;
-      color: #333
+      color: #333;
     }
     .applyValue {
       flex: 1;
       color: #999;
       word-break: break-all;
+      text-align: left;
     }
   }
   .applyFieldCopy {
@@ -202,7 +209,22 @@ $spaceBottom2: calc(48PX + 36px + env(safe-area-inset-bottom) - 12PX);
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  position: relative;
+  .bottomLeftRadius, .bottomRightRadius {
+    @extend .radius;
+    bottom: -11px;
+  }
+  .bottomLeftRadius {
+    left: -11px;
+  }
+  .bottomRightRadius {
+    right: -11px;
+  }
   @extend %bottomHairLine;
+  &:after {
+    background-color: transparent;
+    border-bottom: 1px dashed #c8c8c8;
+  }
   .priceCardFieldName {
     color: #c8c8c8;
     font-size: 12PX;
